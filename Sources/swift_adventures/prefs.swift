@@ -9,7 +9,6 @@ func get_pref(name: String) -> Foundation.CFPropertyList? {
 }
 
 func set_pref(name: String, value: String) {
-
     Foundation.CFPreferencesSetValue(
         CFStringFromString(name), 
         CFStringFromString(value), 

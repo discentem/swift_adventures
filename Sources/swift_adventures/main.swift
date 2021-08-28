@@ -2,17 +2,15 @@ import SystemConfiguration
 import CoreData
 import Foundation
 
-func get_console_user() -> String {
+func get_console_user() -> String? {
     var uid: uid_t = 0
     var gid: gid_t = 0
 
     if let name = SCDynamicStoreCopyConsoleUser(nil, &uid, &gid) {
-        let ns: NSString = name as NSString
-        let s: String = ns as String
-        return s
-    } else {
-        return "failed"
-    }
+        return StringFromCFString(name)
+    } 
+
+    return nil
 }
 
 func get_os_version() -> OSVersion {
@@ -28,7 +26,10 @@ func get_os_version() -> OSVersion {
 
 let BUNDLE_ID = "com.grahamgilbert.crypt"
 
-print(get_console_user())
+let user = get_console_user()
+if user != nil {
+    print(user!)
+}
 
 print(get_os_version())
 
