@@ -1,6 +1,5 @@
 import Foundation
 
-@available (macOS 10.13, *)
 // Borrow with <3 from: https://github.com/macadmins/nudge/blob/main/Nudge/Utilities/SoftwareUpdate.swift
 func shellout(command: String, args: [String]) -> String {
     let task = Process()
