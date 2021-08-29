@@ -31,7 +31,8 @@ if outPath != nil {
     print(outPath!)
 }
 
-let defaultPrefs = CryptPreferences(
+let cryptPrefs = CryptPreferences(
+    Domain: BUNDLE_ID,
     RemovePlist: true,
     RotateUsedKey: true,
     OutputPath: "/private/var/root/crypt_output.plist",
@@ -42,15 +43,16 @@ let defaultPrefs = CryptPreferences(
 
 //delete_pref(name: "RemovePlist", domain: BUNDLE_ID)
 
-let removePlist = get_pref_or_set_default(
-    name: "RemovePlist", 
-    domain: BUNDLE_ID,
-    defaultCryptPrefs: defaultPrefs
-)
+let removePlist = cryptPrefs.get_pref_or_set_default(name: "RemovePlist")
 print(removePlist!)
 
 let computerName = get_mac_name()
 if computerName != nil {
     print(computerName!)
 }
+
+print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
+
+
+
 
