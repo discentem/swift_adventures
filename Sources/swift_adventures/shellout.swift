@@ -1,6 +1,6 @@
 import Foundation
 
-// Borrow with <3 from: https://github.com/macadmins/nudge/blob/main/Nudge/Utilities/SoftwareUpdate.swift
+// Copied with <3 from https://github.com/macadmins/nudge/blob/main/Nudge/Utilities/SoftwareUpdate.swift
 func shellout(command: String, args: [String]) -> String {
     let task = Process()
     task.launchPath = command
