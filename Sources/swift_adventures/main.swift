@@ -3,25 +3,17 @@ import CoreData
 import Foundation
 
 func get_console_user() -> String? {
-    var uid: uid_t = 0
-    var gid: gid_t = 0
-
-    if let name = SCDynamicStoreCopyConsoleUser(nil, &uid, &gid) {
+    if let name = SCDynamicStoreCopyConsoleUser(nil, nil, nil) {
         return StringFromCFString(name)
     } 
-
     return nil
 }
 
-func get_os_version() -> OSVersion {
-    let major = ProcessInfo().operatingSystemVersion.majorVersion
-    let minor = ProcessInfo().operatingSystemVersion.minorVersion
-    let patch = ProcessInfo().operatingSystemVersion.patchVersion
-    return OSVersion(
-        major: major,
-        minor: minor,
-        patch: patch
-    )
+func get_mac_name() -> String? {
+    if let name = Host.current().localizedName {
+        return name
+    }
+    return nil
 }
 
 let BUNDLE_ID = "com.grahamgilbert.crypt"
@@ -33,9 +25,32 @@ if user != nil {
 
 print(get_os_version())
 
-let outPath = get_pref(name: "OutputPath")
+let outPath = get_pref(name: "OutputPath", domain: BUNDLE_ID)
 
 if outPath != nil {
     print(outPath!)
+}
+
+let defaultPrefs = CryptPreferences(
+    RemovePlist: true,
+    RotateUsedKey: true,
+    OutputPath: "/private/var/root/crypt_output.plist",
+    ValidateKey: true,
+    KeyEscrowInterval: 0,
+    AdditionalCurlOpts: []
+)
+
+//delete_pref(name: "RemovePlist", domain: BUNDLE_ID)
+
+let removePlist = get_pref_or_set_default(
+    name: "RemovePlist", 
+    domain: BUNDLE_ID,
+    defaultCryptPrefs: defaultPrefs
+)
+print(removePlist!)
+
+let computerName = get_mac_name()
+if computerName != nil {
+    print(computerName!)
 }
 

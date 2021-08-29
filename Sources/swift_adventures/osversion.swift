@@ -63,3 +63,14 @@ extension OSVersion: Comparable {
         return (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)
     }
 }
+
+func get_os_version() -> OSVersion {
+    let major = ProcessInfo().operatingSystemVersion.majorVersion
+    let minor = ProcessInfo().operatingSystemVersion.minorVersion
+    let patch = ProcessInfo().operatingSystemVersion.patchVersion
+    return OSVersion(
+        major: major,
+        minor: minor,
+        patch: patch
+    )
+}
