@@ -42,6 +42,8 @@ func delete_pref(name: String, domain: String) {
 }
 
 public struct CryptPreferences {
+
+    public var Domain: String
     public var RemovePlist: Bool
     public var RotateUsedKey: Bool
     public var OutputPath: String
@@ -57,27 +59,25 @@ public struct CryptPreferences {
             case "ValidateKey": return self.ValidateKey
             case "KeyEscrowInterval": return self.KeyEscrowInterval
             case "AdditionalCurlOpts": return self.AdditionalCurlOpts
-            default: fatalError("Wrong property name")
+            default: fatalError("Invalid property name")
         }
     }
-}
-
-func get_pref_or_set_default(
-    name: String, 
-    domain: String, 
-    defaultCryptPrefs: CryptPreferences) -> Foundation.CFPropertyList? {
-        let pref = get_pref(name: name, domain: domain)
+    public func get_pref_or_set_default(name: String) -> Foundation.CFPropertyList? {
+        let pref = get_pref(name: name, domain: self.Domain)
         if pref != nil {
             NSLog("\(name) is already set to \(pref!). Returning.")
             return pref
         }
-        if let prefVal = defaultCryptPrefs.valueByPropertyName(name) as CFPropertyList? {
+        if let prefVal = self.valueByPropertyName(name) as CFPropertyList? {
             NSLog("\(name) not set. Setting default of \(prefVal).")
-            set_pref(name: name, value: prefVal, domain: domain)
+            set_pref(name: name, value: prefVal, domain: self.Domain)
         } else {
             fatalError("can't cast prefVal")
         }
         
-        return get_pref(name: name, domain: domain)
+        return get_pref(name: name, domain: self.Domain)
+    }
 }
+
+
 
