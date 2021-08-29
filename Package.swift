@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift_adventures",
+    name: "swift_crypt_checkin",
     platforms: [
         .macOS(.v10_13)
     ],

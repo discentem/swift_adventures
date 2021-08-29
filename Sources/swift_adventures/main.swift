@@ -43,7 +43,7 @@ let cryptPrefs = CryptPreferences(
 
 //delete_pref(name: "RemovePlist", domain: BUNDLE_ID)
 
-let removePlist = cryptPrefs.get_pref_or_set_default(name: "RemovePlist")
+let removePlist = cryptPrefs.get_or_set_default(name: "RemovePlist")
 print(removePlist!)
 
 let computerName = get_mac_name()

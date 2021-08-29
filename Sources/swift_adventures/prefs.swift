@@ -62,7 +62,7 @@ public struct CryptPreferences {
             default: fatalError("Invalid property name")
         }
     }
-    public func get_pref_or_set_default(name: String) -> Foundation.CFPropertyList? {
+    public func get_or_set_default(name: String) -> Foundation.CFPropertyList? {
         let pref = get_pref(name: name, domain: self.Domain)
         if pref != nil {
             NSLog("\(name) is already set to \(pref!). Returning.")
@@ -78,6 +78,10 @@ public struct CryptPreferences {
         return get_pref(name: name, domain: self.Domain)
     }
 }
+
+// public struct Crypt {
+
+// }
 
 
 
