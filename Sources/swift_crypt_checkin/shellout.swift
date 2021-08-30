@@ -1,7 +1,13 @@
 import Foundation
 
 public enum shelloutError: LocalizedError {
-    case Error(_ err: String)
+    case error(_ err: String)
+    public var errorDescription: String? {
+        switch self {
+            case .error(let err):
+                return "shellout failed: \(err)"
+        }
+    } 
 }
 
 // Copied with <3 from https://github.com/macadmins/nudge/blob/main/Nudge/Utilities/SoftwareUpdate.swift
@@ -19,7 +25,7 @@ func shellout(command: String, args: [String]) throws -> String {
         try task.run()
     } catch {
         //return 
-        throw shelloutError.Error("Error running \(command) with args: \(args)")
+        throw shelloutError.error("Error running \(command) with args: \(args)")
     }
 
     task.waitUntilExit()
@@ -31,7 +37,7 @@ func shellout(command: String, args: [String]) throws -> String {
     let error = String(decoding: errorData, as: UTF8.self)
 
     if task.terminationStatus != 0 {
-        throw shelloutError.Error(error)
+        throw shelloutError.error(error)
     } else {
         return output
     }

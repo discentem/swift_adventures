@@ -1,6 +1,7 @@
 import SystemConfiguration
 import CoreData
 import Foundation
+import Logging
 
 func get_console_user() -> String? {
     if let name = SCDynamicStoreCopyConsoleUser(nil, nil, nil) {
@@ -46,10 +47,13 @@ print(cryptPrefs.get_pref(name: "RemovePlist")!)
 //     print(computerName!)
 // }
 
+let logger = Logger(label: "swift_crypt_checkin")
+
 do {
-    try print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
-} catch shelloutError.Error(let err) {
-    print("caught error: \(err)")
+    let msg = try shellout(command: "/bin/bash", args: ["-", "/bin/echo hello"])
+    logger.info("\(msg)")
+} catch let err as shelloutError {
+    logger.error("\(err)")
 }
 
 
