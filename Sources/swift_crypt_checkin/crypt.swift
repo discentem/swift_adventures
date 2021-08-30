@@ -13,17 +13,17 @@ func StringFromCFString(_ name: Foundation.CFString) -> String {
 
 class CryptPreferences {
 
-    public var Domain: String
-    public var RemovePlist: Bool
-    public var RotateUsedKey: Bool
-    public var OutputPath: String
-    public var ValidateKey: Bool
-    public var KeyEscrowInterval: Int
-    public var AdditionalCurlOpts: [String]
+    public var Domain: Foundation.CFString
+    public var RemovePlist: Bool?
+    public var RotateUsedKey: Bool?
+    public var OutputPath: String?
+    public var ValidateKey: Bool?
+    public var KeyEscrowInterval: Int?
+    public var AdditionalCurlOpts: [String]?
 
     init(Domain: String) {
         // default values if not already set
-        self.Domain = Domain
+        self.Domain = Domain as CFString
         self.RotateUsedKey = true
         self.RemovePlist = true
         self.OutputPath = "/private/var/root/crypt_output.plist"
@@ -53,31 +53,33 @@ class CryptPreferences {
     public func get_pref(name: String) -> Foundation.CFPropertyList? {
         let pref = Foundation.CFPreferencesCopyAppValue(
             CFStringFromString(name), 
-            CFStringFromString(self.Domain)
+            self.Domain
         )
         return pref
     }
 
     public func set_pref(name: String, value: Foundation.CFPropertyList?) {
-        let cfdomain = CFStringFromString(self.Domain)
         Foundation.CFPreferencesSetValue(
             CFStringFromString(name), 
             value, 
-            cfdomain, 
+            self.Domain, 
             Foundation.kCFPreferencesAnyUser, 
             Foundation.kCFPreferencesCurrentHost)
-        Foundation.CFPreferencesAppSynchronize(cfdomain)
+        Foundation.CFPreferencesAppSynchronize(self.Domain)
+        self.setValueByPropertyName(
+            name: name, value: value)
     }
 
     public func delete_pref(name: String) {
-        let cfdomain = CFStringFromString(self.Domain)
         Foundation.CFPreferencesSetValue(
             CFStringFromString(name), 
             nil, 
-            cfdomain, 
+            self.Domain, 
             Foundation.kCFPreferencesAnyUser, 
             Foundation.kCFPreferencesCurrentHost)
-        Foundation.CFPreferencesAppSynchronize(cfdomain)
+        Foundation.CFPreferencesAppSynchronize(self.Domain)
+        self.setValueByPropertyName(
+            name: name, value: nil)
     }
 
     private func valueByPropertyName(_ name:String) -> Any? {
@@ -94,12 +96,12 @@ class CryptPreferences {
 
     private func setValueByPropertyName(name: String, value: CFPropertyList?) {
         switch name {
-            case "RemovePlist": self.RemovePlist = value as! Bool
-            case "RotateUsedKey": self.RotateUsedKey = value as! Bool
-            case "OutputPath": self.OutputPath = value as! String
-            case "ValidateKey": self.ValidateKey = value as! Bool
-            case "KeyEscrowInterval": self.KeyEscrowInterval = value as! CFNumber as! Int
-            case "AdditionalCurlOpts": self.AdditionalCurlOpts = value as! [String]
+            case "RemovePlist": self.RemovePlist = value as! Bool?
+            case "RotateUsedKey": self.RotateUsedKey = value as! Bool?
+            case "OutputPath": self.OutputPath = value as! String?
+            case "ValidateKey": self.ValidateKey = value as! Bool?
+            case "KeyEscrowInterval": self.KeyEscrowInterval = value as! CFNumber as! Int?
+            case "AdditionalCurlOpts": self.AdditionalCurlOpts = value as! [String]?
             default: fatalError("Invalid property name")
         }
     }

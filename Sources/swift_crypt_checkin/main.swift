@@ -29,10 +29,10 @@ let cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
 
 cryptPrefs.delete_pref(name: "RemovePlist")
 
-cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
+//cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
 
 print(cryptPrefs.RemovePlist)
-print(cryptPrefs.get_pref(name: "RemovePlist")!)
+print(cryptPrefs.get_pref(name: "RemovePlist"))
 
 // print(cryptPrefs.RemovePlist)
 // print(get_pref(name: "RemovePlist", domain: BUNDLE_ID))
