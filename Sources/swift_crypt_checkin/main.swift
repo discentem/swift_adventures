@@ -25,33 +25,25 @@ if user != nil {
 
 print(get_os_version())
 
-let outPath = get_pref(name: "OutputPath", domain: BUNDLE_ID)
+let cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
 
-if outPath != nil {
-    print(outPath!)
-}
+cryptPrefs.delete_pref(name: "RemovePlist")
 
-let cryptPrefs = CryptPreferences(
-    Domain: BUNDLE_ID,
-    RemovePlist: true,
-    RotateUsedKey: true,
-    OutputPath: "/private/var/root/crypt_output.plist",
-    ValidateKey: true,
-    KeyEscrowInterval: 0,
-    AdditionalCurlOpts: []
-)
+cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
 
-//delete_pref(name: "RemovePlist", domain: BUNDLE_ID)
+print(cryptPrefs.RemovePlist)
+print(cryptPrefs.get_pref(name: "RemovePlist")!)
 
-let removePlist = cryptPrefs.get_or_set_default(name: "RemovePlist")
-print(removePlist!)
+// print(cryptPrefs.RemovePlist)
+// print(get_pref(name: "RemovePlist", domain: BUNDLE_ID))
 
-let computerName = get_mac_name()
-if computerName != nil {
-    print(computerName!)
-}
 
-print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
+// let computerName = get_mac_name()
+// if computerName != nil {
+//     print(computerName!)
+// }
+
+//print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
 
 
 
