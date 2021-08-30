@@ -46,7 +46,11 @@ print(cryptPrefs.get_pref(name: "RemovePlist")!)
 //     print(computerName!)
 // }
 
-//print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
+do {
+    try print(shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"]))
+} catch shelloutError.Error(let err) {
+    print("caught error: \(err)")
+}
 
 
 
