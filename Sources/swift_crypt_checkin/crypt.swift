@@ -67,7 +67,9 @@ class CryptPreferences {
             Foundation.kCFPreferencesCurrentHost)
         Foundation.CFPreferencesAppSynchronize(self.Domain)
         self.setValueByPropertyName(
-            name: name, value: value)
+            name: name, 
+            value: value
+        )
     }
 
     public func delete_pref(name: String) {
