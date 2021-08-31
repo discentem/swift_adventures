@@ -1,6 +1,7 @@
 import SystemConfiguration
 import CoreData
 import Foundation
+import Logging
 
 func get_console_user() -> String? {
     if let name = SCDynamicStoreCopyConsoleUser(nil, nil, nil) {
@@ -15,6 +16,8 @@ func get_mac_name() -> String? {
     }
     return nil
 }
+LoggingSystem.bootstrap(StreamLogHandler.standardError)
+let logger = Logger(label: "com.grahamgilbert.cryptcheckin")
 
 let BUNDLE_ID = "com.grahamgilbert.crypt"
 
@@ -27,7 +30,7 @@ print(get_os_version())
 
 var cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
 
-//cryptPrefs.delete_pref(name: "RemovePlist")
+cryptPrefs.delete_pref(name: "RemovePlist")
 
 // cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
 
