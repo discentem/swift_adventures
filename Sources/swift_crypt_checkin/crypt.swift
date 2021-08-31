@@ -1,4 +1,5 @@
 import Foundation
+import os.log
 
 func CFStringFromString(_ name: String) -> Foundation.CFString {
     let ns = name as NSString
@@ -17,11 +18,6 @@ func CFPreferencesSync(_ domain: CFString) -> Bool {
 }
 
 func get_pref(name: String, domain: CFString) -> Foundation.CFPropertyList? {
-    // if CFPreferencesSync(domain) {
-    //     NSLog("sync before CopyAppValue succeeded")
-    // } else {
-    //     fatalError("sync before CopyAppValue failed")
-    // }
     let pref = Foundation.CFPreferencesCopyValue(
         CFStringFromString(name), 
         domain,
@@ -45,6 +41,7 @@ func delete_pref(name: String, domain: String) -> Bool {
 class CryptPreferences {
 
     public var Domain: Foundation.CFString
+    public var ServerURL: String?
     public var RemovePlist: Bool?
     public var RotateUsedKey: Bool?
     public var OutputPath: String?
@@ -52,9 +49,10 @@ class CryptPreferences {
     public var KeyEscrowInterval: Int?
     public var AdditionalCurlOpts: [String]?
 
-    init(Domain: String) {
+    init(Domain: String = "com.grahamgilbert.crypt") {
         // default values if not already set
         self.Domain = Domain as CFString
+        self.ServerURL = nil
         self.RotateUsedKey = true
         self.RemovePlist = true
         self.OutputPath = "/private/var/root/crypt_output.plist"
@@ -62,35 +60,30 @@ class CryptPreferences {
         self.KeyEscrowInterval = 0
         self.AdditionalCurlOpts = []
 
-        let props = ["RotateUsedKey", "RemovePlist", "OutputPath", 
+        let props = ["ServerURL", "RotateUsedKey", "RemovePlist", "OutputPath", 
                      "ValidateKey", "KeyEscrowInterval", "AdditionalCurlOpts"]
         for (_, p) in props.enumerated() {
             let pref = self.get_pref(name: p)
             let v = self.getValueByPropertyName(p)
             if pref == nil {
-                NSLog("\(p) is not set in CFPreferences. Setting to default of \(v!).")
+                logger.info("\(p) is not set in CFPreferences. Setting to default of \(v!).")
                 let setp = self.set_pref(name: p, value: v as CFPropertyList)
                 if setp {
-                    NSLog("Setting preference succeeded.")
+                    logger.debug("Setting preference \(p) to \(v!) succeeded.")
                 } else {
-                    fatalError("Setting preference failed")
+                    logger.error("Setting preference \(p) to \(v!) failed!!")
                 } 
             } else {
                 // if preference is already set, set class var to match
                 self.setValueByPropertyName(
                     name: p, 
                     value: pref)
-                NSLog("\(p) already set to \(v!).")
+                logger.debug("\(p) already set to \(self.getValueByPropertyName(p)!).")
             }
         }
     }
 
     public func get_pref(name: String) -> Foundation.CFPropertyList? {
-        // if CFPreferencesSync(self.Domain) {
-        //     NSLog("sync before CopyAppValue succeeded")
-        // } else {
-        //     fatalError("sync before CopyAppValue failed")
-        // }
         let pref = Foundation.CFPreferencesCopyAppValue(
             CFStringFromString(name), 
             self.Domain
@@ -122,6 +115,7 @@ class CryptPreferences {
 
     private func getValueByPropertyName(_ name:String) -> Any? {
         switch name {
+            case "ServerURL": return self.ServerURL
             case "RemovePlist": return self.RemovePlist
             case "RotateUsedKey": return self.RotateUsedKey
             case "OutputPath": return self.OutputPath
@@ -134,6 +128,7 @@ class CryptPreferences {
 
     private func setValueByPropertyName(name: String, value: CFPropertyList?) {
         switch name {
+            case "ServerURL": self.ServerURL = value as! String?
             case "RemovePlist": self.RemovePlist = value as! Bool?
             case "RotateUsedKey": self.RotateUsedKey = value as! Bool?
             case "OutputPath": self.OutputPath = value as! String?
@@ -142,6 +137,11 @@ class CryptPreferences {
             case "AdditionalCurlOpts": self.AdditionalCurlOpts = value as! [String]?
             default: fatalError("Invalid property name")
         }
+    }
+
+    public func escrow() -> Bool {
+        logger.info("Attemtping to escrow key...")
+        return false
     }
 }
 
