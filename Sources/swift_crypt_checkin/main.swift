@@ -27,7 +27,7 @@ print(get_os_version())
 
 var cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
 
-cryptPrefs.delete_pref(name: "RemovePlist")
+//cryptPrefs.delete_pref(name: "RemovePlist")
 
 // cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
 

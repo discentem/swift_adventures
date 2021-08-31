@@ -17,11 +17,11 @@ func CFPreferencesSync(_ domain: CFString) -> Bool {
 }
 
 func get_pref(name: String, domain: CFString) -> Foundation.CFPropertyList? {
-    if CFPreferencesSync(domain) {
-        NSLog("sync before CopyAppValue succeeded")
-    } else {
-        fatalError("sync before CopyAppValue failed")
-    }
+    // if CFPreferencesSync(domain) {
+    //     NSLog("sync before CopyAppValue succeeded")
+    // } else {
+    //     fatalError("sync before CopyAppValue failed")
+    // }
     let pref = Foundation.CFPreferencesCopyValue(
         CFStringFromString(name), 
         domain,
@@ -86,11 +86,11 @@ class CryptPreferences {
     }
 
     public func get_pref(name: String) -> Foundation.CFPropertyList? {
-        if CFPreferencesSync(self.Domain) {
-            NSLog("sync before CopyAppValue succeeded")
-        } else {
-            fatalError("sync before CopyAppValue failed")
-        }
+        // if CFPreferencesSync(self.Domain) {
+        //     NSLog("sync before CopyAppValue succeeded")
+        // } else {
+        //     fatalError("sync before CopyAppValue failed")
+        // }
         let pref = Foundation.CFPreferencesCopyAppValue(
             CFStringFromString(name), 
             self.Domain
