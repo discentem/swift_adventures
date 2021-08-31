@@ -1,7 +1,6 @@
 import SystemConfiguration
 import CoreData
 import Foundation
-import Logging
 
 func get_console_user() -> String? {
     if let name = SCDynamicStoreCopyConsoleUser(nil, nil, nil) {
@@ -26,35 +25,24 @@ if user != nil {
 
 print(get_os_version())
 
-let cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
+var cryptPrefs = CryptPreferences(Domain: BUNDLE_ID)
 
-//cryptPrefs.delete_pref(name: "RemovePlist")
+cryptPrefs.delete_pref(name: "RemovePlist")
 
-//cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
+// cryptPrefs.set_pref(name: "RemovePlist", value: true as CFPropertyList)
 
-let rp = cryptPrefs.RemovePlist
-if rp != nil {
-    print(rp!)
-}
-print(cryptPrefs.get_pref(name: "RemovePlist")!)
-
-// print(cryptPrefs.RemovePlist)
-// print(get_pref(name: "RemovePlist", domain: BUNDLE_ID))
-
-
-// let computerName = get_mac_name()
-// if computerName != nil {
-//     print(computerName!)
+// let rp = cryptPrefs.RemovePlist
+// if rp != nil {
+//     print(rp!)
 // }
+// print(cryptPrefs.get_pref(name: "RemovePlist")!)
 
-let logger = Logger(label: "swift_crypt_checkin")
-
-do {
-    let msg = try shellout(command: "/bin/bash", args: ["-", "/bin/echo hello"])
-    logger.info("\(msg)")
-} catch let err as shelloutError {
-    logger.error("\(err)")
-}
+// do {
+//     let msg = try shellout(command: "/bin/bash", args: ["-c", "/bin/echo hello"])
+//     logger.info("\(msg)")
+// } catch let err as shelloutError {
+//     logger.error("\(err.errorDescription!)")
+// }
 
 
 

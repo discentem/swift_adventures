@@ -1,10 +1,10 @@
 import Foundation
 
 public enum shelloutError: LocalizedError {
-    case error(_ err: String)
+    case shellError(_ err: String)
     public var errorDescription: String? {
         switch self {
-            case .error(let err):
+            case .shellError(let err):
                 return "shellout failed: \(err)"
         }
     } 
@@ -25,7 +25,7 @@ func shellout(command: String, args: [String]) throws -> String {
         try task.run()
     } catch {
         //return 
-        throw shelloutError.error("Error running \(command) with args: \(args)")
+        throw shelloutError.shellError("Error running \(command) with args: \(args)")
     }
 
     task.waitUntilExit()
@@ -37,7 +37,7 @@ func shellout(command: String, args: [String]) throws -> String {
     let error = String(decoding: errorData, as: UTF8.self)
 
     if task.terminationStatus != 0 {
-        throw shelloutError.error(error)
+        throw shelloutError.shellError(error)
     } else {
         return output
     }

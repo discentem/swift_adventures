@@ -8,7 +8,38 @@ func CFStringFromString(_ name: String) -> Foundation.CFString {
 func StringFromCFString(_ name: Foundation.CFString) -> String {
     let s = name as NSString
     return s as String
+}
 
+func CFPreferencesSync(_ domain: CFString) -> Bool {
+    return Foundation.CFPreferencesAppSynchronize(
+        domain
+    )
+}
+
+func get_pref(name: String, domain: CFString) -> Foundation.CFPropertyList? {
+    if CFPreferencesSync(domain) {
+        NSLog("sync before CopyAppValue succeeded")
+    } else {
+        fatalError("sync before CopyAppValue failed")
+    }
+    let pref = Foundation.CFPreferencesCopyValue(
+        CFStringFromString(name), 
+        domain,
+        Foundation.kCFPreferencesAnyUser, 
+        Foundation.kCFPreferencesAnyHost
+    )
+    return pref
+}
+
+func delete_pref(name: String, domain: String) -> Bool {
+    let cfdomain = CFStringFromString(domain)
+    Foundation.CFPreferencesSetValue(
+        CFStringFromString(name), 
+        nil, 
+        cfdomain, 
+        Foundation.kCFPreferencesAnyUser, 
+        Foundation.kCFPreferencesAnyHost)
+    return CFPreferencesSync(cfdomain)
 }
 
 class CryptPreferences {
@@ -35,22 +66,31 @@ class CryptPreferences {
                      "ValidateKey", "KeyEscrowInterval", "AdditionalCurlOpts"]
         for (_, p) in props.enumerated() {
             let pref = self.get_pref(name: p)
+            let v = self.getValueByPropertyName(p)
             if pref == nil {
-                // if preference isn't set, set to default
-                self.set_pref(
-                    name: p, 
-                    value: self.valueByPropertyName(p) as CFPropertyList
-                )
+                NSLog("\(p) is not set in CFPreferences. Setting to default of \(v!).")
+                let setp = self.set_pref(name: p, value: v as CFPropertyList)
+                if setp {
+                    NSLog("Setting preference succeeded.")
+                } else {
+                    fatalError("Setting preference failed")
+                } 
             } else {
                 // if preference is already set, set class var to match
                 self.setValueByPropertyName(
                     name: p, 
                     value: pref)
+                NSLog("\(p) already set to \(v!).")
             }
         }
     }
 
     public func get_pref(name: String) -> Foundation.CFPropertyList? {
+        if CFPreferencesSync(self.Domain) {
+            NSLog("sync before CopyAppValue succeeded")
+        } else {
+            fatalError("sync before CopyAppValue failed")
+        }
         let pref = Foundation.CFPreferencesCopyAppValue(
             CFStringFromString(name), 
             self.Domain
@@ -58,33 +98,29 @@ class CryptPreferences {
         return pref
     }
 
-    public func set_pref(name: String, value: Foundation.CFPropertyList?) {
+    public func set_pref(name: String, value: Foundation.CFPropertyList?) -> Bool {
         Foundation.CFPreferencesSetValue(
             CFStringFromString(name), 
             value, 
             self.Domain, 
             Foundation.kCFPreferencesAnyUser, 
-            Foundation.kCFPreferencesCurrentHost)
-        Foundation.CFPreferencesAppSynchronize(self.Domain)
-        self.setValueByPropertyName(
-            name: name, 
-            value: value
-        )
+            Foundation.kCFPreferencesAnyHost)
+        return CFPreferencesSync(self.Domain)
     }
 
-    public func delete_pref(name: String) {
+    public func delete_pref(name: String) -> Bool {
         Foundation.CFPreferencesSetValue(
             CFStringFromString(name), 
             nil, 
             self.Domain, 
             Foundation.kCFPreferencesAnyUser, 
-            Foundation.kCFPreferencesCurrentHost)
-        Foundation.CFPreferencesAppSynchronize(self.Domain)
+            Foundation.kCFPreferencesAnyHost)
         self.setValueByPropertyName(
             name: name, value: nil)
+        return CFPreferencesSync(self.Domain)
     }
 
-    private func valueByPropertyName(_ name:String) -> Any? {
+    private func getValueByPropertyName(_ name:String) -> Any? {
         switch name {
             case "RemovePlist": return self.RemovePlist
             case "RotateUsedKey": return self.RotateUsedKey
