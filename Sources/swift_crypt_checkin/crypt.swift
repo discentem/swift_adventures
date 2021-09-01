@@ -38,6 +38,37 @@ func delete_pref(name: String, domain: String) -> Bool {
     return CFPreferencesSync(cfdomain)
 }
 
+extension URLComponents {
+    init(scheme: String = "https",
+         host: String = "www.google.com",
+         path: String = "/search",
+         queryItems: [URLQueryItem]) {
+        self.init()
+        self.scheme = scheme
+        self.host = host
+        self.path = path
+        self.queryItems = queryItems
+    }
+}
+// https://stackoverflow.com/questions/24551816/swift-encode-url
+func urlEncode() {
+    let scheme = "https"
+    let host = "www.google.com"
+    let path = "/search"
+    let queryItem = URLQueryItem(name: "q", value: "Formula One")
+
+
+    var urlComponents = URLComponents()
+    urlComponents.scheme = scheme
+    urlComponents.host = host
+    urlComponents.path = path
+    urlComponents.queryItems = [queryItem]
+
+    if let url = urlComponents.url {
+        print(url)   // "https://www.google.com/search?q=Formula%20One"
+    }
+}
+
 class CryptPreferences {
 
     public var Domain: Foundation.CFString
@@ -140,7 +171,21 @@ class CryptPreferences {
     }
 
     public func escrow() -> Bool {
-        logger.info("Attemtping to escrow key...")
+        logger.info("Attempting to escrow key...")
+        guard let serverURL = self.ServerURL else {
+            logger.warning("ServerURL is not set. Cannot enforce Filevault escrow.")
+            return false
+        }
+        logger.debug("ServerURL set to \(serverURL)")
+        var checkinURL: String = ""
+        if (serverURL).hasSuffix("/") {
+            checkinURL = "\(serverURL)checkin/"
+        } else {
+            checkinURL = "\(serverURL)/checkin/"
+        }
+
+        print(checkinURL)
+
         return false
     }
 }
